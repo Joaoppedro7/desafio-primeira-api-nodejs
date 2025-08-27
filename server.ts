@@ -1,8 +1,15 @@
-// const fastify = require("fastify");
-// const crypto = require("crypto");
-
 import fastify from "fastify";
-import crypto from "node:crypto";
+import { fastifySwagger } from "@fastify/swagger";
+import {
+  validatorCompiler,
+  serializerCompiler,
+  type ZodTypeProvider,
+  jsonSchemaTransform,
+} from "fastify-type-provider-zod";
+import { createCourseRoute } from "./src/routes/create-course.ts";
+import { getCourseByIdRoute } from "./src/routes/get-course-by-id.ts";
+import { getCoursesRoute } from "./src/routes/get-courses.ts";
+import scalarAPIReference from "@scalar/fastify-api-reference";
 
 const server = fastify({
   logger: {
@@ -14,53 +21,79 @@ const server = fastify({
       },
     },
   },
-});
+}).withTypeProvider<ZodTypeProvider>();
 
-const courses = [
-  { id: "1", title: "Curso de Node.js" },
-  { id: "2", title: "Curso de React" },
-  { id: "3", title: "Curso de React Native" },
-];
+if (process.env.NODE_ENV === "development") {
+  server.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "Desafio Node.js",
+        version: "1.0.0",
+      },
+    },
+    transform: jsonSchemaTransform,
+  });
 
-server.get("/courses", () => {
-  return { courses };
-});
+  server.register(scalarAPIReference, {
+    routePrefix: "/docs",
+    configuration: {
+      theme: "kepler",
+    },
+  });
+}
+server.setSerializerCompiler(serializerCompiler);
+server.setValidatorCompiler(validatorCompiler);
 
-server.get("/courses/:id", (request, reply) => {
-  type Params = {
-    id: string;
-  };
+server.register(createCourseRoute);
+server.register(getCourseByIdRoute);
+server.register(getCoursesRoute);
 
-  const params = request.params as Params;
-  const courseId = params.id;
+// server.put("/courses/:id", (request, reply) => {
+//   type Body = {
+//     title: string;
+//   };
+//   type Params = {
+//     id: string;
+//   };
 
-  const course = courses.find((course) => course.id === courseId);
+//   const body = request.body as Body;
+//   const courseTitle = body.title;
 
-  if (course) {
-    return { course };
-  }
+//   const params = request.params as Params;
+//   const courseId = params.id;
 
-  return reply.status(404).send();
-});
+//   const course = courses.find((course) => course.id === courseId);
 
-server.post("/courses", (request, reply) => {
-  type Body = {
-    title: string;
-  };
+//   if (!course) {
+//     return reply.status(404).send({ message: "Registro não encontrado" });
+//   }
 
-  const courseId = crypto.randomUUID();
+//   if (courseTitle) {
+//     course.title = courseTitle;
+//   }
 
-  const body = request.body as Body;
-  const courseTitle = body.title;
+//   return { course };
+// });
 
-  if (!courseTitle) {
-    return reply.status(400).send({ message: "Título Obrigatório" });
-  }
+// server.delete("/courses/:id", (request, reply) => {
+//   type Params = {
+//     id: string;
+//   };
 
-  courses.push({ id: courseId, title: courseTitle });
+//   const params = request.params as Params;
+//   const courseId = params.id;
 
-  return reply.status(201).send({ courseId });
-});
+//   const course = courses.find((course) => course.id === courseId);
+//   const courseIndex = courses.findIndex((course) => course.id === courseId);
+
+//   if (!course) {
+//     return reply.status(404).send({ message: "Registro não encontrado" });
+//   }
+
+//   courses.splice(courseIndex, 1);
+
+//   return reply.status(200).send({ message: "Item removido com sucesso." });
+// });
 
 server.listen({ port: 3333 }).then(() => {
   console.log("HTTP Server running!");

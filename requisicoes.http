@@ -2,7 +2,7 @@ POST http://localhost:3333/courses
 Content-Type: application/json
 
 {
-  "title": "Curso de Docker"
+  "title": "Curs"
 }
 
 ###
@@ -11,5 +11,16 @@ GET http://localhost:3333/courses
 
 ###
 
-GET http://localhost:3333/courses/ee4b59ae-809c-43e2-a2bb-de86bbdf8b90
+GET http://localhost:3333/courses/7f1ae92e-ada0-48d1-b10b-68d3e46e98be
 
+###
+
+PUT http://localhost:3333/courses/1
+Content-Type: application/json
+
+{
+  "title": "Curso de Node.js"
+}
+
+###
+DELETE http://localhost:3333/courses/7353d99d-34ce-4bb1-b9ea-86ba82eda834
