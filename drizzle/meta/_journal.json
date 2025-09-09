@@ -15,6 +15,34 @@
       "when": 1756308122951,
       "tag": "0001_many_tusk",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756421504627,
+      "tag": "0002_steep_fallen_one",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1756421742777,
+      "tag": "0003_huge_skullbuster",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756423498391,
+      "tag": "0004_bent_sally_floyd",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1756646452621,
+      "tag": "0005_bored_gambit",
+      "breakpoints": true
     }
   ]
 }
