@@ -3,7 +3,7 @@ import { server } from "../app.ts";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
 
-test("create a course.", async () => {
+test("Create a course.", async () => {
   await server.ready();
 
   const response = await request(server.server)
