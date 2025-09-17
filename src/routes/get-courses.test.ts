@@ -3,16 +3,19 @@ import { randomUUID } from "node:crypto";
 import { server } from "../app.ts";
 import request from "supertest";
 import { makeCourse } from "../tests/factories/make-course.ts";
+import { makeAuthenticatedUser } from "../tests/factories/make-user.ts";
 
-test("Get course by id.", async () => {
+test("Get courses", async () => {
   await server.ready();
+
+  const { token } = await makeAuthenticatedUser("manager");
 
   const titleID = randomUUID();
   const course = await makeCourse(titleID);
 
-  const response = await request(server.server).get(
-    `/courses?search=${titleID}`
-  );
+  const response = await request(server.server)
+    .get(`/courses?search=${titleID}`)
+    .set("Authorization", token);
 
   expect(response.status).toEqual(200);
   expect(response.body).toEqual({

@@ -1,5 +1,6 @@
 POST http://localhost:3333/courses
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMzQ1ZDA2ZS1hMzIwLTQ3M2EtOTk2Yy0zYjM5NmY4YTY5NDAiLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc1ODExNzk5NH0.T50U8gecpvFSTcnFyJSKAnEqn4utzXBaMgCOEUxOnlY
 
 {
   "title": "Curso de Cobol"
@@ -11,7 +12,8 @@ GET http://localhost:3333/courses
 
 ###
 
-GET http://localhost:3333/courses/7f1ae92e-ada0-48d1-b10b-68d3e46e98be
+GET http://localhost:3333/courses/bb0862e3-f9c5-4646-bc23-7556a4d840db
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmOGQxZWM3OS0yMDNmLTQyOTctYmNjNS0wZjkxYmE1N2MyNmQiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc1ODExNTAyMX0.Bj2gtXplGqa5NLlPrLygGTtWVhjt7Wq1VyCu6HPPRow
 
 ###
 
@@ -24,3 +26,13 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:3333/courses/7353d99d-34ce-4bb1-b9ea-86ba82eda834
+
+
+###
+POST http://localhost:3333/sessions
+Content-Type: application/json  
+
+{
+  "email": "PedroHenrique_Pereira@hotmail.com",
+  "password": "123456" 
+}

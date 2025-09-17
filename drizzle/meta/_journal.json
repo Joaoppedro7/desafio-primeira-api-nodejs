@@ -43,6 +43,13 @@
       "when": 1756646452621,
       "tag": "0005_bored_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1758117875160,
+      "tag": "0006_busy_calypso",
+      "breakpoints": true
     }
   ]
 }
