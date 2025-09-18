@@ -241,18 +241,18 @@ Há arquivos de testes em `src/routes/*.test.ts` e helpers em `src/tests/factori
 ## 🗺️ Diagrama do fluxo principal
 
 ```mermaid
-graph TD
+flowchart TD
   A[Cliente] -->|1. POST /sessions| B[Login Controller]
   B --> C[Drizzle ORM]
   C --> D[(PostgreSQL)]
   B -->|Assina com JWT_SECRET| E[Emite JWT]
   E --> A
 
-  A -->|2. Authorization: <token>| F[Fastify]
+  A -->|2. Authorization: token| F[Fastify]
   F --> G[check-request-jwt]
   G --> H{Token válido?}
   H -- Não --> X[401 Unauthorized]
-  H -- Sim --> [check-user-role - quando exigido]
+  H -- Sim --> I["check-user-role - quando exigido"]
   I --> J{Tem permissão?}
   J -- Não --> Y[401 Unauthorized]
   J -- Sim --> K[Controller da Rota]
