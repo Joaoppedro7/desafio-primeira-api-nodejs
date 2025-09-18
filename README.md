@@ -252,7 +252,7 @@ graph TD
   F --> G[check-request-jwt]
   G --> H{Token válido?}
   H -- Não --> X[401 Unauthorized]
-  H -- Sim --> ["check-user-role (quando exigido)"]
+  H -- Sim --> [check-user-role (quando exigido)]
   I --> J{Tem permissão?}
   J -- Não --> Y[401 Unauthorized]
   J -- Sim --> K[Controller da Rota]
