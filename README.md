@@ -1,234 +1,271 @@
 # 🎓 API de Gerenciamento de Cursos
 
-Uma API RESTful desenvolvida em Node.js com Fastify para gerenciamento de cursos, construída como parte de um desafio de desenvolvimento.
+Uma API RESTful em Node.js + Fastify para gerenciamento de cursos, usando TypeScript, Drizzle ORM (PostgreSQL) e autenticação via JWT.
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Tecnologias
 
-- **Node.js** - Runtime JavaScript
-- **TypeScript** - Linguagem de programação tipada
-- **Fastify** - Framework web rápido e eficiente
-- **Drizzle ORM** - ORM moderno para TypeScript
-- **PostgreSQL** - Banco de dados relacional
-- **Zod** - Validação de esquemas
-- **Swagger/OpenAPI** - Documentação da API
-- **Docker** - Containerização
+- **Node.js** (TypeScript)
+- **Fastify** + `fastify-type-provider-zod`
+- **Zod** (validação)
+- **Drizzle ORM** (PostgreSQL)
+- **JWT** (autenticação)
+- **Vitest** + `@vitest/coverage-v8`
+- **Docker** (PostgreSQL)
 
-## 📋 Pré-requisitos
+## ✅ Requisitos
 
-- Node.js (versão 18 ou superior)
-- Docker e Docker Compose
-- npm ou yarn
+- Node.js 18+
+- Docker e Docker Compose (para banco de dados)
+- npm
 
-## 🛠️ Instalação
+## ⚙️ Variáveis de ambiente
 
-1. **Clone o repositório**
+Crie um arquivo `.env` na raiz do projeto com as chaves abaixo:
 
-   ```bash
-   git clone <url-do-repositorio>
-   cd nodejs
-   ```
+```env
+# URL de conexão com o Postgres (ajuste conforme necessário)
+DATABASE_URL=postgres://admin:admin@localhost:5432/desafio
 
-2. **Instale as dependências**
+# Ambiente: development | test | production
+NODE_ENV=development
 
-   ```bash
-   npm install
-   ```
+# Segredo usado para assinar/verificar JWT (obrigatório)
+JWT_SECRET=uma_chave_segura_aqui
+```
 
-3. **Configure as variáveis de ambiente**
-   Crie um arquivo `.env` na raiz do projeto:
+Para testes, opcionalmente crie um `.env.test` (ex.: apontando para outro banco/container):
 
-   ```env
-   DATABASE_URL=postgresql://admin:admin@localhost:5432/desafio
-   NODE_ENV=development
-   ```
+```env
+DATABASE_URL=postgres://admin:admin@localhost:5433/desafio_test
+NODE_ENV=test
+JWT_SECRET=test_secret
+```
 
-4. **Inicie o banco de dados**
+## 🐳 Banco de dados com Docker
 
-   ```bash
-   docker-compose up -d
-   ```
+Suba um Postgres local com Docker Compose (usa `docker/setup.sql` para seed inicial do DB):
 
-5. **Execute as migrações**
+```bash
+docker-compose up -d
+# Para parar/remover:
+# docker-compose down
+```
 
-   ```bash
-   npm run db:generate
-   npm run db:migrate
-   ```
+- Host: `localhost`
+- Porta: `5432`
+- DB: `desafio`
+- User/Password: `admin` / `admin`
 
-6. **Inicie o servidor de desenvolvimento**
-   ```bash
-   npm run dev
-   ```
+## 📦 Instalação
 
-## 🗄️ Estrutura do Banco de Dados
+```bash
+npm install
+```
 
-### Tabela: `courses`
+## 🧭 Migrações e seed
 
-- `id` (UUID) - Identificador único do curso
-- `title` (TEXT) - Título do curso (único)
-- `description` (TEXT) - Descrição do curso
+- Gerar migrações a partir do schema:
 
-### Tabela: `users`
+```bash
+npm run db:generate
+```
 
-- `id` (UUID) - Identificador único do usuário
-- `name` (TEXT) - Nome do usuário
-- `email` (TEXT) - Email do usuário (único)
+- Executar migrações no banco:
 
-## 📚 Endpoints da API
+```bash
+npm run db:migrate
+```
+
+- Rodar seed de dados (script local em `src/database/seed.ts`):
+
+```bash
+npm run db:seed
+```
+
+- Visualizar o banco com Drizzle Studio:
+
+```bash
+npm run db:studio
+```
+
+## ▶️ Executar em desenvolvimento
+
+```bash
+npm run dev
+```
+
+O servidor iniciará em `http://localhost:3333`.
+
+- Documentação interativa: `http://localhost:3333/docs` (apenas em `NODE_ENV=development`).
+
+## 🧪 Testes e cobertura
+
+- Rodar testes:
+
+```bash
+npm test
+```
+
+- Assistir testes (com cobertura em HTML):
+
+```bash
+npm run test:watch
+```
+
+- Cobertura (gera `coverage/`):
+
+```bash
+npm run coverage
+npm run coverage:open
+```
+
+Obs.: a config de cobertura e exclusões está em `vitest.config.ts`.
+
+## 🔐 Autenticação e autorização
+
+- Autenticação via JWT.
+- Após login, envie o token no cabeçalho `Authorization` exatamente como retornado (sem prefixo `Bearer`).
+- Permissões por papel (role): `student` e `manager`.
+  - Algumas rotas exigem `manager`.
+
+Cabeçalho de autenticação:
+
+```http
+Authorization: <token_jwt>
+```
+
+Erros comuns:
+
+- `401 Unauthorized`: token ausente/inválido.
+- `400 Invalid credentials`: e-mail ou senha inválidos no login.
+
+## 📚 Endpoints
+
+Base URL: `http://localhost:3333`
+
+### Autenticação
+
+- POST `/sessions` — Login
+  - Body:
+
+```json
+{
+  "email": "manager@example.com",
+  "password": "senha"
+}
+```
+
+- Resposta 200:
+
+```json
+{ "token": "<jwt>" }
+```
 
 ### Cursos
 
-#### `POST /courses`
+- POST `/courses` — Criar curso (requer JWT com role `manager`)
+  - Body:
 
-Cria um novo curso.
+```json
+{ "title": "Nome do Curso" }
+```
 
-**Body:**
+- Resposta 201:
+
+```json
+{ "courseId": "uuid" }
+```
+
+- GET `/courses` — Listar cursos (requer JWT e role `manager`)
+  - Query params opcionais: `search`, `orderBy` (`title` | `id`), `page` (padrão 1)
+  - Resposta 200:
 
 ```json
 {
-  "title": "Nome do Curso"
+  "courses": [{ "id": "uuid", "title": "Nome", "enrollments": 0 }],
+  "total": 1
 }
 ```
 
-**Resposta (201):**
+- GET `/courses/:id` — Buscar curso (requer JWT)
+  - Resposta 200:
 
 ```json
 {
-  "courseId": "uuid-do-curso"
+  "course": { "id": "uuid", "title": "Nome", "description": null }
 }
 ```
 
-#### `GET /courses`
+- Resposta 404: `null`
 
-Lista todos os cursos.
+## 🗂️ Estrutura do projeto (principal)
 
-**Resposta (200):**
-
-```json
-{
-  "courses": [
-    {
-      "id": "uuid",
-      "title": "Nome do Curso",
-      "description": "Descrição do curso"
-    }
-  ]
-}
+```
+src/
+  app.ts              # Configuração do Fastify, plugins e rotas
+  server.ts           # Bootstrap do servidor (porta 3333)
+  routes/
+    login.ts
+    create-course.ts
+    get-courses.ts
+    get-course-by-id.ts
+    hooks/
+      check-request-jwt.ts
+      check-user-role.ts
+  database/
+    client.ts         # Conexão Drizzle com Postgres
+    schema.ts         # Tabelas (users, courses, enrollments)
+    seed.ts
+  utils/
+    get-authenticated-user-from-request.ts
 ```
 
-#### `GET /courses/:id`
+Há arquivos de testes em `src/routes/*.test.ts` e helpers em `src/tests/factories`.
 
-Busca um curso específico por ID.
+## 🧰 Scripts úteis
 
-**Resposta (200):**
+- `npm run dev` — servidor em desenvolvimento
+- `npm run db:generate` — gerar migrações
+- `npm run db:migrate` — executar migrações
+- `npm run db:studio` — abrir Drizzle Studio
+- `npm run db:seed` — rodar seed
+- `npm test` — testes
+- `npm run coverage` — relatório de cobertura
+- `npm run coverage:open` — abrir relatório de cobertura
 
-```json
-{
-  "course": {
-    "id": "uuid",
-    "title": "Nome do Curso",
-    "description": "Descrição do curso"
-  }
-}
-```
+## 📎 Dicas
 
-## 🔄 Fluxo da Aplicação
+- O arquivo `requisicoes.http` contém exemplos para usar no VS Code (extensão REST Client) ou Cursor.
+- O log em desenvolvimento usa `pino-pretty` para saída formatada.
+
+## 🗺️ Diagrama do fluxo principal
 
 ```mermaid
 graph TD
-    A[Cliente] --> B[Fastify Server]
-    B --> C{Validação Zod}
-    C -->|Sucesso| D[Controller/Route]
-    C -->|Erro| E[Erro 400 - Dados Inválidos]
-    D --> F[Drizzle ORM]
-    F --> G[PostgreSQL Database]
-    G --> H[Resposta JSON]
-    H --> A
+  A[Cliente] -->|1. POST /sessions| B[Login Controller]
+  B --> C[Drizzle ORM]
+  C --> D[(PostgreSQL)]
+  B -->|Assina com JWT_SECRET| E[Emite JWT]
+  E --> A
 
-    subgraph "Endpoints Principais"
-        I[POST /courses] --> J[Criar Curso]
-        K[GET /courses] --> L[Listar Cursos]
-        M[GET /courses/:id] --> N[Buscar Curso]
-    end
-
-    subgraph "Validações"
-        O[Validação de Título]
-        P[Validação de UUID]
-        Q[Validação de Schema]
-    end
-
-    subgraph "Banco de Dados"
-        R[Tabela: courses]
-        S[Tabela: users]
-    end
-
-    J --> O
-    L --> R
-    N --> P
-    F --> R
-    F --> S
+  A -->|2. Authorization: <token>| F[Fastify]
+  F --> G[check-request-jwt]
+  G --> H{Token válido?}
+  H -- Não --> X[401 Unauthorized]
+  H -- Sim --> I[check-user-role (quando exigido)]
+  I --> J{Tem permissão?}
+  J -- Não --> Y[401 Unauthorized]
+  J -- Sim --> K[Controller da Rota]
+  K --> L[Drizzle ORM]
+  L --> D
+  D --> M[Resposta JSON 2xx/4xx]
+  M --> A
 ```
-
-## 🛠️ Scripts Disponíveis
-
-- `npm run dev` - Inicia o servidor em modo de desenvolvimento
-- `npm run db:generate` - Gera as migrações do banco de dados
-- `npm run db:migrate` - Executa as migrações no banco de dados
-- `npm run db:studio` - Abre o Drizzle Studio para visualizar o banco
-
-## 📖 Documentação da API
-
-Quando o servidor estiver rodando em modo de desenvolvimento, você pode acessar:
-
-- **Swagger UI**: `http://localhost:3333/docs`
-- **API Reference**: Interface moderna para visualizar e testar os endpoints
-
-## 🐳 Docker
-
-O projeto inclui configuração Docker para o banco de dados PostgreSQL:
-
-```bash
-# Iniciar o banco de dados
-docker-compose up -d
-
-# Parar o banco de dados
-docker-compose down
-```
-
-## 🔧 Configuração de Desenvolvimento
-
-### Estrutura do Projeto
-
-```
-├── src/
-│   ├── routes/          # Rotas da API
-│   └── database/        # Configuração do banco de dados
-├── drizzle/             # Migrações do banco
-├── server.ts           # Arquivo principal do servidor
-├── package.json        # Dependências e scripts
-└── docker-compose.yml  # Configuração do Docker
-```
-
-### Logs
-
-O servidor utiliza Pino para logging com formatação bonita em desenvolvimento.
-
-## 🚀 Deploy
-
-Para fazer deploy em produção:
-
-1. Configure as variáveis de ambiente apropriadas
-2. Execute as migrações do banco de dados
-3. Inicie o servidor com `node server.ts`
 
 ## 📝 Licença
 
-Este projeto está sob a licença ISC.
+ISC.
 
-## 👨‍💻 Autor
+## 👤 Autor
 
-Desenvolvido como parte de um desafio de Node.js.
-
----
-
-**Nota**: Este é um projeto de demonstração/desafio. Para uso em produção, considere adicionar autenticação, validações mais robustas e testes automatizados.
+Projeto desenvolvido como parte de um desafio de Node.js.
