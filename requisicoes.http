@@ -1,9 +1,9 @@
 POST http://localhost:3333/courses
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMzQ1ZDA2ZS1hMzIwLTQ3M2EtOTk2Yy0zYjM5NmY4YTY5NDAiLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc1ODExNzk5NH0.T50U8gecpvFSTcnFyJSKAnEqn4utzXBaMgCOEUxOnlY
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMzQ1ZDA2ZS1hMzIwLTQ3M2EtOTk2Yy0zYjM5NmY4YTY5NDAiLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc1ODI4MTQ3M30.qQDO63roh7TKfXuguBvbp3laVAeww-DYgXyfYrmW5LY
 
 {
-  "title": "Curso de Cobol"
+  "title": "Curso de React"
 }
 
 ###
@@ -13,7 +13,7 @@ GET http://localhost:3333/courses
 ###
 
 GET http://localhost:3333/courses/bb0862e3-f9c5-4646-bc23-7556a4d840db
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmOGQxZWM3OS0yMDNmLTQyOTctYmNjNS0wZjkxYmE1N2MyNmQiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc1ODExNTAyMX0.Bj2gtXplGqa5NLlPrLygGTtWVhjt7Wq1VyCu6HPPRow
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMzQ1ZDA2ZS1hMzIwLTQ3M2EtOTk2Yy0zYjM5NmY4YTY5NDAiLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc1ODI4MTQ3M30.qQDO63roh7TKfXuguBvbp3laVAeww-DYgXyfYrmW5LY
 
 ###
 
@@ -42,7 +42,7 @@ POST http://localhost:3333/register
 Content-Type: application/json  
 
 {
-  "name": "Pedro",
-  "email": "PedroHenrique_Pereira@hotmail.com",
-  "password": "123456" 
+  "name": "Gabriel",
+  "email": "praaadin@gmail.com",
+  "password": "123456"
 }

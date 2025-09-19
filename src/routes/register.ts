@@ -16,6 +16,7 @@ export const registerRoute: FastifyPluginAsyncZod = async (server) => {
           name: z.string(),
           email: z.email(),
           password: z.string(),
+          role: z.enum(["student", "manager"]).optional(),
         }),
         response: {
           201: z.object({
@@ -28,7 +29,7 @@ export const registerRoute: FastifyPluginAsyncZod = async (server) => {
       },
     },
     async (request, reply) => {
-      const { name, email, password } = request.body;
+      const { name, email, password, role } = request.body;
 
       const result = await db
         .select()
@@ -45,6 +46,7 @@ export const registerRoute: FastifyPluginAsyncZod = async (server) => {
           name,
           email,
           password: await hash(password),
+          ...(role ? { role } : {}),
         })
         .returning();
 
