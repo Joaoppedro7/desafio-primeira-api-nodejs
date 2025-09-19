@@ -23,4 +23,4 @@ primary_region = 'gig'
   memory_mb = 256
 
 [deploy]
-  release_command = "npm run db:migrate"
+  release_command = "chmod +x scripts/fly-migrate.sh && ./scripts/fly-migrate.sh"
