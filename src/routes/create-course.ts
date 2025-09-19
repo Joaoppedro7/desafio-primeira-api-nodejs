@@ -9,7 +9,18 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
   server.post(
     "/courses",
     {
-      preHandler: [checkRequestJWT, checkUserRole("manager")],
+      preHandler: [
+        checkRequestJWT,
+        async (request, reply) => {
+          // Prefer a local check to customize the 401 message for this route
+          const userRole = request.user?.role;
+          if (userRole !== "manager") {
+            return reply.status(401).send({
+              message: "only users with manager role can create courses",
+            });
+          }
+        },
+      ],
       schema: {
         tags: ["Courses"],
         summary: "Create a course",
@@ -22,6 +33,13 @@ export const createCourseRoute: FastifyPluginAsyncZod = async (server) => {
               courseId: z.uuid(),
             })
             .describe("Curso criado com sucesso"),
+          401: z
+            .object({
+              message: z.literal(
+                "only users with manager role can create courses"
+              ),
+            })
+            .describe("Unauthorized: Only managers can create courses"),
         },
       },
     },
