@@ -36,3 +36,13 @@ Content-Type: application/json
   "email": "PedroHenrique_Pereira@hotmail.com",
   "password": "123456" 
 }
+
+###
+POST http://localhost:3333/register
+Content-Type: application/json  
+
+{
+  "name": "Pedro",
+  "email": "PedroHenrique_Pereira@hotmail.com",
+  "password": "123456" 
+}
