@@ -22,5 +22,5 @@ primary_region = 'gig'
   cpus = 1
   memory_mb = 256
 
-[deploy]
-  release_command = "chmod +x scripts/fly-migrate.sh && ./scripts/fly-migrate.sh"
+# [deploy]
+#   release_command = "echo 'Release command started' && echo 'Environment check:' && env | grep DATABASE_URL && echo 'Release command completed'"
